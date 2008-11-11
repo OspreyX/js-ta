@@ -1,0 +1,30 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Main.master.cs" Inherits="Main" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+   <title>ETF Table</title>
+   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/reset-fonts-grids/reset-fonts-grids.css">
+   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/base/base-min.css">
+   <asp:ContentPlaceHolder ID="head" runat="server">
+   </asp:ContentPlaceHolder>
+   <link type="text/css" rel="stylesheet" href="siteStyles.css" />
+</head>
+<body class="yui-skin-sam">
+   <form id="form1" runat="server">
+   <div id="top1">
+      <h3>
+         ETF Table</h3>
+         All Exchange Traded Funds with trend and performance, all on one page.
+   </div>
+   <asp:ContentPlaceHolder ID="cont1" runat="server">
+   </asp:ContentPlaceHolder>
+   <div id="footer">
+      <span>The footer.</span>
+   </div>
+   <asp:ContentPlaceHolder ID="scripts" runat="server">
+   </asp:ContentPlaceHolder>
+   </form>
+</body>
+</html>
