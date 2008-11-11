@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>TA Tests</title>
+
+   <script src="js-TA.js" type="text/javascript"></script>
+
+   <script src="yui/yahoo/yahoo.js" type="text/javascript"></script>
+   <script type="text/javascript">
+      //Tests
+      var dump = function(lbl,o) {
+         document.writeln(lbl + " :<br />" + YAHOO.util.Lang.dump(o,4) + "<br /><br />");
+      };
+
+      dump("testArr", testArr = [44.12000, 45.08000, 42.70000, 41.08000, 42.93000, 42.62000, 44.73000, 44.21000, 44.24000, 43.59000, 44.88000, 44.40000, 44.57000, 45.78000, 46.42000, 47.06000, 47.28000, 46.70000, 46.37000, 46.15000, 46.94000, 46.78000, 46.31000, 46.04000, 46.62000, 47.05000, 47.24000, 47.20000, 47.43000, 47.80000, 47.73000, 47.20000, 48.12000, 47.58000, 46.82000, 47.30000, 47.86000, 47.98000, 47.70000, 47.17000, 47.74000, 47.75000, 48.78000, 48.13000, 48.15000, 47.94000, 47.90000, 47.27000, 46.82000, 47.31000, 47.50000, 47.85000, 48.01000, 48.12000, 48.26000, 48.07000, 48.27000, 49.04000, 49.42000, 49.23000, 49.14000, 50.40000, 49.86000, 50.36000, 50.19000, 50.55000, 51.23000, 51.60000, 51.61000]); //44.12000,45.08000,42.70000,41.08000,42.93000,42.62000,44.73000,44.21000,44.24000,43.59000,44.88000
+      dump("testSum", testSum = TA.Sum(testArr));
+      dump("testSumWithPeriod", testSumWithPeriod = TA.Sum(testArr, 4));
+      dump("testSMAverage", testSMAverage = TA.SMAverage(testArr));
+      dump("testSMAverageWithPeriod", testSMAverageWithPeriod = TA.SMAverage(testArr, 4));
+      dump("testEMAverage", testEMAverage = TA.EMAverage(testArr));
+      dump("testEMAverageWithPeriod", testEMAverageWithPeriod = TA.EMAverage(testArr, 4));
+      dump("testLinearReg", testLinearReg = TA.LinearReg(testArr));
+      dump("testLinearRegWithPeriod", testLinearRegWithPeriod = TA.LinearReg(testArr, 4));
+      dump("testRoc", testRoc = TA.Roc(testArr));
+      dump("testRocWithPeriod", testRocWithPeriod = TA.Roc(testArr, 4));
+   </script>
+
+</head>
+<body>
+</body>
+</html>
