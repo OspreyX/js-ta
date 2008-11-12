@@ -38,7 +38,7 @@ var TA = {
         for (var i = 0, len = _src.length; i < len; i++) {
             if ((i + period) <= len) {
                 for (var j = i, len2 = i + period; j < len2; j++) {
-                    _iSum += _src[j];
+                    _iSum += parseFloat(_src[j]);
                 }
                 retVal.push(_iSum);
                 _iSum = 0;
@@ -81,7 +81,7 @@ var TA = {
             } else if (i == period - 1) {
                 retVal.push(startingSMA);
             } else {
-                currentEMA = ((_src[i] - previousEMA) * smoothing) + previousEMA;
+                currentEMA = ((parseFloat(_src[i]) - previousEMA) * smoothing) + previousEMA;
                 retVal.push(currentEMA);
                 previousEMA = currentEMA;
             }
@@ -106,7 +106,7 @@ var TA = {
             if (i >= period - 1) {
                 sumXY = 0;
                 for (var count = 0; count < period; count++) {
-                    sumXY += count * (_src[i - count]);
+                    sumXY += count * parseFloat(_src[i - count]);
                 }
                 slope = (period * sumXY - sumX * TA.Sum(
                             _src.slice(0, i + 1).reverse(), period)[0]) / divisor;
@@ -133,8 +133,8 @@ var TA = {
                 retVal.push(null);
             }
             else {
-                valueNBack = _src[i - (period - 1)];
-                currentRoc = ((_src[i] - valueNBack) / valueNBack) * 100;
+                valueNBack = parseFloat(_src[i - (period - 1)]);
+                currentRoc = ((parseFloat(_src[i]) - valueNBack) / valueNBack) * 100;
                 retVal.push(currentRoc);
             }
         }
