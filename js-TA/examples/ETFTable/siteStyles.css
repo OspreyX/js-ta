@@ -2,9 +2,20 @@ body {
 	
 }
 
-.up {
-	background-color:LightGreen;
+.up
+{
+    background-color: #90EE90;
+}
+.down
+{
+    background-color: #FF9999;
 }
 .yui-layout-unit-left div.yui-layout-hd {
-	height:26px;
+	height:24px;
+}
+.yui-layout-unit-top div.yui-layout-hd {
+	height: 0px;
+}
+.yui-layout-unit-bottom div.yui-layout-hd {
+	height: 0px;
 }
