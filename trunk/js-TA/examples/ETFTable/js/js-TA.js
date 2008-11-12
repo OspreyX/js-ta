@@ -17,17 +17,39 @@
 
 var TA = {
 
-//    PointInTime: function(dt, val) {
-//        this.date = dt;
-//        this.value = val;
-//    },
+    //    PointInTime: function(dt, val) {
+    //        this.date = dt;
+    //        this.value = val;
+    //    },
 
-//    TimeSeries: function(sourceArray) {
+    //    TimeSeries: function(sourceArray) {
 
-//        var _src = [];
-//        _src.concat(sourceArray);
+    //        var _src = [];
+    //        _src.concat(sourceArray);
 
-//    },
+    //    },
+
+    Cfg: {
+        ReturnType: "Array",
+        RoundDecimalPlacesTo: 2
+    },
+
+    Helpers: {
+        roundDecimal: function(value, n) {
+            if (typeof (n) !== 'number') {
+                n = TA.Cfg.RoundDecimalPlacesTo;
+            }
+            var d = 1;
+            for (var i = 0; i < n; i++) {
+                d = d * 10;
+            }
+            return Math.round(value * d) / d;
+        },
+        percentDiff: function(a, b) {
+            return ((a - b) / b) * 100;
+        }
+    },
+
     Sum: function(series, period) {
         var retVal = [];
         var _src = ([]).concat(series);
@@ -40,7 +62,7 @@ var TA = {
                 for (var j = i, len2 = i + period; j < len2; j++) {
                     _iSum += parseFloat(_src[j]);
                 }
-                retVal.push(_iSum);
+                retVal.push(TA.Helpers.roundDecimal(_iSum));
                 _iSum = 0;
             } else {
                 retVal.push(null);
@@ -57,7 +79,7 @@ var TA = {
         }
         for (var i = 0, len = _src.length; i < len; i++) {
             if ((i + period) <= len) {
-                retVal.push(TA.Sum(_src.slice(i, i + period))[0] / period);
+                retVal.push(TA.Helpers.roundDecimal(TA.Sum(_src.slice(i, i + period))[0] / period));
             } else {
                 retVal.push(null);
             }
@@ -82,7 +104,7 @@ var TA = {
                 retVal.push(startingSMA);
             } else {
                 currentEMA = ((parseFloat(_src[i]) - previousEMA) * smoothing) + previousEMA;
-                retVal.push(currentEMA);
+                retVal.push(TA.Helpers.roundDecimal(currentEMA));
                 previousEMA = currentEMA;
             }
         }
@@ -112,7 +134,7 @@ var TA = {
                             _src.slice(0, i + 1).reverse(), period)[0]) / divisor;
                 intercept = (TA.Sum(
                             _src.slice(0, i + 1).reverse(), period)[0] - slope * sumX) / period;
-                retVal.push(intercept + slope * (period - 1));
+                retVal.push(TA.Helpers.roundDecimal(intercept + slope * (period - 1)));
             } else {
                 retVal.push(null);
             }
@@ -135,7 +157,7 @@ var TA = {
             else {
                 valueNBack = parseFloat(_src[i - (period - 1)]);
                 currentRoc = ((parseFloat(_src[i]) - valueNBack) / valueNBack) * 100;
-                retVal.push(currentRoc);
+                retVal.push(TA.Helpers.roundDecimal(currentRoc));
             }
         }
         retVal.reverse();
