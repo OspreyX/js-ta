@@ -121,19 +121,16 @@ var TA = {
         }
         var sumX = period * (period - 1) * 0.5;
         var divisor = sumX * sumX - period * period * (period - 1) * (2 * period - 1) / 6;
-        var sumXY;
-        var slope;
-        var intercept;
+        var sumXY, slope, intercept, sum;
         for (var i = 0, len = _src.length; i < len; i++) {
             if (i >= period - 1) {
                 sumXY = 0;
                 for (var count = 0; count < period; count++) {
                     sumXY += count * parseFloat(_src[i - count]);
                 }
-                slope = (period * sumXY - sumX * TA.Sum(
-                            _src.slice(0, i + 1).reverse(), period)[0]) / divisor;
-                intercept = (TA.Sum(
-                            _src.slice(0, i + 1).reverse(), period)[0] - slope * sumX) / period;
+                sum = TA.Sum(_src.slice(0, i + 1).reverse(), period)[0];
+                slope = (period * sumXY - sumX * sum) / divisor;
+                intercept = (sum - slope * sumX) / period;
                 retVal.push(TA.Helpers.roundDecimal(intercept + slope * (period - 1)));
             } else {
                 retVal.push(null);
