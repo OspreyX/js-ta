@@ -14,13 +14,7 @@ InitVars();
 (function() {
     Event.onDOMReady(function() {
 
-    });
-})();
 
-// defer instantiation
-Event.addListener(window, "load", function() {
-    
-    
     var myDataTableDeferred = new lib.util.Element('dataTableContainer');
 
 
@@ -38,8 +32,8 @@ Event.addListener(window, "load", function() {
     layout.on("render", function() {
         initDataTable(layout.getSizes().center.h - 33);
     });
-    
-    
+
+
     // Point to a URL
     var myDataSource = new lib.util.XHRDataSource("js_handlers/DailyHandler.ashx");
     // Set the responseType as JSON
@@ -80,8 +74,14 @@ Event.addListener(window, "load", function() {
             renderLoopSize: 125
         });
     };
-
     layout.render();
+        
+    });
+})();
+
+// defer instantiation
+Event.addListener(window, "load", function() {
+    
     
 });
 
@@ -114,10 +114,10 @@ function transform(obj) {
 //        }
         lst[i].EMA15 = tmpCrossObj.EMAverage15
         lst[i].EMA5 = tmpCrossObj.EMAverage5
-
-        var fast = "10", slow = "30"
-        var fastSeries = TA.EMAverage(arrClose, parseInt(fast));
-        var slowSeries = TA.EMAverage(arrClose, parseInt(slow));
+        
+        fast = "10", slow = "30"
+        fastSeries = TA.EMAverage(arrClose, parseInt(fast));
+        slowSeries = TA.EMAverage(arrClose, parseInt(slow));
         tmpCrossObj["EMAverage" + fast] = fastSeries[0];
         tmpCrossObj["EMAverage" + fast + "_Prev"] = fastSeries[1];
         tmpCrossObj["EMAverage" + slow] = slowSeries[0];
@@ -131,8 +131,8 @@ function transform(obj) {
         //        else if (percentEMA5Over25_Prev > 0 && lst[i].PercentEMA5Over25 <= 0) {
         //            lst[i].PercentEMA5Over25 = '<span class="down">' + lst[i].PercentEMA5Over25 + '</span>';
         //        }
-        lst[i].EMA30 = tmpCrossObj.EMAverage30
-        lst[i].EMA10 = tmpCrossObj.EMAverage10
+        //lst[i].EMA30 = tmpCrossObj.EMAverage30
+        //lst[i].EMA10 = tmpCrossObj.EMAverage10
 
     }
     obj.results = lst;
