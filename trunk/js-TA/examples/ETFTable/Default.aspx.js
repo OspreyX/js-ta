@@ -72,7 +72,13 @@ Event.addListener(window, "load", function() {
 	        , { key: "Last", label: "Last", sortable: true }
 			, { key: "Previous", label: "Previous", sortable: true }
 	        , { key: "PercentEMA5Over15", label: "EMA 5/15 %", sortable: true }
-    //, { key: "PercentEMA10Over30", label: "EMA 10/30 %", sortable: true }
+            , { key: "PercentEMA10Over30", label: "EMA 10/30 %", sortable: true }
+            , { key: "PercentEMA15Over45", label: "EMA 15/45 %", sortable: true }
+            , { key: "PercentEMA20Over60", label: "EMA 20/60 %", sortable: true }
+            , { key: "PercentEMA25Over75", label: "EMA 25/75 %", sortable: true }
+            , { key: "PercentEMA30Over90", label: "EMA 30/90 %", sortable: true }
+            , { key: "PercentEMA35Over105", label: "EMA 35/105 %", sortable: true }
+            , { key: "PercentEMA40Over120", label: "EMA 40/120 %", sortable: true }
     //,{key:"Close", label:"Close"}
 	    ];
 
@@ -112,35 +118,129 @@ function transformRawETFData(initialData) {
     else {
         return;
     }
+    
+    (function() {
 
-    var start = new Date().getTime();
-    var tmpCrossObj = {}, arrClose, fast, slow;
-    //for (var i = 0, len = initialData.results.length; i < len; i++) {
-    var len = ETFTable.tempData.initialData.results.length;
-    for (var i = 0; i < len; i++) {
-        var row = ETFTable.tempData.initialData.results.shift();
+        var start = new Date().getTime();
+        var tmpCrossObj = {}, arrClose, fast, slow;
+        //for (var i = 0, len = initialData.results.length; i < len; i++) {
+        if (ETFTable.tempData.initialData && ETFTable.tempData.initialData.results && ETFTable.tempData.initialData.results.length > 0) {
+            var len = ETFTable.tempData.initialData.results.length;
+            for (var i = 0; i < len; i++) {
+                var row = ETFTable.tempData.initialData.results.shift();
 
-        if (typeof (row) == 'object') {
-            arrClose = row.Closes.split(',');
+                if (typeof (row) == 'object') {
+                    arrClose = row.Closes.split(',');
 
-            //EMA 5/15
-            fast = "5"; slow = "15";
-            ETFTable.tempData.fastSeries = TA.EMAverage(arrClose, parseInt(fast));
-            ETFTable.tempData.slowSeries = TA.EMAverage(arrClose, parseInt(slow));
+                    row.Last = arrClose[0];
+                    row.Previous = arrClose[1];
 
-            tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
-            tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
-            tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
-            tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
-            row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
-            row.PercentEMA5Over15 = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverage15) / tmpCrossObj.EMAverage15) * 100);
-            ETFTable.expandedData.results.push(row);
-            if (new Date().getTime() - start > 500) {
-                setTimeout('transformRawETFData()', 0);
-                //return;
+                    //EMA 5/15
+                    fast = "5"; slow = "15";
+                    ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast)+3), parseInt(fast));
+                    ETFTable.tempData.slowSeries = TA.EMAverage(arrClose.slice(0, parseInt(slow) + 3), parseInt(slow));
+
+                    tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
+                    tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
+                    tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
+                    tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
+                    row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
+                    row["PercentEMA" + fast + "Over" + slow] = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverageSlow) / tmpCrossObj.EMAverageSlow) * 100);
+
+                    //EMA 10/30
+                    fast = "10"; slow = "30";
+                    ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast) + 3), parseInt(fast));
+                    ETFTable.tempData.slowSeries = TA.EMAverage(arrClose.slice(0, parseInt(slow) + 3), parseInt(slow));
+
+                    tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
+                    tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
+                    tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
+                    tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
+                    row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
+                    row["PercentEMA" + fast + "Over" + slow] = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverageSlow) / tmpCrossObj.EMAverageSlow) * 100);
+
+                    //EMA 15/45
+                    fast = "15"; slow = "45";
+                    ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast) + 3), parseInt(fast));
+                    ETFTable.tempData.slowSeries = TA.EMAverage(arrClose.slice(0, parseInt(slow) + 3), parseInt(slow));
+
+                    tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
+                    tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
+                    tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
+                    tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
+                    row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
+                    row["PercentEMA" + fast + "Over" + slow] = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverageSlow) / tmpCrossObj.EMAverageSlow) * 100);
+
+                    //EMA 20/60
+                    fast = "20"; slow = "60";
+                    ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast) + 3), parseInt(fast));
+                    ETFTable.tempData.slowSeries = TA.EMAverage(arrClose.slice(0, parseInt(slow) + 3), parseInt(slow));
+
+                    tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
+                    tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
+                    tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
+                    tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
+                    row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
+                    row["PercentEMA" + fast + "Over" + slow] = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverageSlow) / tmpCrossObj.EMAverageSlow) * 100);
+
+                    //EMA 25/75
+                    fast = "25"; slow = "75";
+                    ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast) + 3), parseInt(fast));
+                    ETFTable.tempData.slowSeries = TA.EMAverage(arrClose.slice(0, parseInt(slow) + 3), parseInt(slow));
+
+                    tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
+                    tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
+                    tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
+                    tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
+                    row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
+                    row["PercentEMA" + fast + "Over" + slow] = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverageSlow) / tmpCrossObj.EMAverageSlow) * 100);
+
+                    //EMA 30/90
+                    fast = "30"; slow = "90";
+                    ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast) + 3), parseInt(fast));
+                    ETFTable.tempData.slowSeries = TA.EMAverage(arrClose.slice(0, parseInt(slow) + 3), parseInt(slow));
+
+                    tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
+                    tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
+                    tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
+                    tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
+                    row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
+                    row["PercentEMA" + fast + "Over" + slow] = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverageSlow) / tmpCrossObj.EMAverageSlow) * 100);
+
+                    //EMA 35/105
+                    fast = "35"; slow = "105";
+                    ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast) + 3), parseInt(fast));
+                    ETFTable.tempData.slowSeries = TA.EMAverage(arrClose.slice(0, parseInt(slow) + 3), parseInt(slow));
+
+                    tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
+                    tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
+                    tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
+                    tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
+                    row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
+                    row["PercentEMA" + fast + "Over" + slow] = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverageSlow) / tmpCrossObj.EMAverageSlow) * 100);
+
+                    //EMA 40/120
+                    fast = "40"; slow = "120";
+                    ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast) + 3), parseInt(fast));
+                    ETFTable.tempData.slowSeries = TA.EMAverage(arrClose.slice(0, parseInt(slow) + 3), parseInt(slow));
+
+                    tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
+                    tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
+                    tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
+                    tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
+                    row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
+                    row["PercentEMA" + fast + "Over" + slow] = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverageSlow) / tmpCrossObj.EMAverageSlow) * 100);
+                    
+                    ETFTable.expandedData.results.push(row);
+                    //if (new Date().getTime() - start > 200) {
+                    if (ETFTable.tempData.initialData.results.length > 0) {
+                        setTimeout(arguments.callee, 0);
+                        //return;
+                    }
+                }
             }
         }
-    }
+    })();
     delete (ETFTable.tempData.initialData);
     delete (ETFTable.tempData.expandComplete);
     delete (ETFTable.tempData.fastSeries);
