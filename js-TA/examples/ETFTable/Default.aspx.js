@@ -55,8 +55,14 @@ Event.addListener(window, "load", function() {
         // Whatever you return will be what the DataTable gets
         //return transform(oParsedResponse);
 
-        return transformRawETFData(oParsedResponse);
-
+        //return transformRawETFData(oParsedResponse);
+        ETFTable.initialData = copy(oParsedResponse);
+        ETFTable.expandedData = copy(oParsedResponse);
+        var percentComplete;
+        ETFTable.expandedData.results = taTransform(function(value, total) {
+            percentComplete = (100 * value / total);
+        });
+        return ETFTable.expandedData;
         //        transform2(0);
         //        var waitIterCounter = 1;
         //        while (!ETFTable.tempData.expandComplete) {
@@ -71,14 +77,14 @@ Event.addListener(window, "load", function() {
 	        { key: "Ticker", label: "Ticker", sortable: true }
 	        , { key: "Last", label: "Last", sortable: true }
 			, { key: "Previous", label: "Previous", sortable: true }
-	        , { key: "PercentEMA5Over15", label: "EMA 5/15 %", sortable: true }
-            , { key: "PercentEMA10Over30", label: "EMA 10/30 %", sortable: true }
-            , { key: "PercentEMA15Over45", label: "EMA 15/45 %", sortable: true }
-            , { key: "PercentEMA20Over60", label: "EMA 20/60 %", sortable: true }
-            , { key: "PercentEMA25Over75", label: "EMA 25/75 %", sortable: true }
-            , { key: "PercentEMA30Over90", label: "EMA 30/90 %", sortable: true }
-            , { key: "PercentEMA35Over105", label: "EMA 35/105 %", sortable: true }
-            , { key: "PercentEMA40Over120", label: "EMA 40/120 %", sortable: true }
+	        , { key: "diffEma1Over2", label: "EMA 5/20 %", sortable: true }
+            , { key: "diffEma2Over3", label: "EMA 20/80 %", sortable: true }
+//            , { key: "PercentEMA15Over45", label: "EMA 15/45 %", sortable: true }
+//            , { key: "PercentEMA20Over60", label: "EMA 20/60 %", sortable: true }
+//            , { key: "PercentEMA25Over75", label: "EMA 25/75 %", sortable: true }
+//            , { key: "PercentEMA30Over90", label: "EMA 30/90 %", sortable: true }
+//            , { key: "PercentEMA35Over105", label: "EMA 35/105 %", sortable: true }
+//            , { key: "PercentEMA40Over120", label: "EMA 40/120 %", sortable: true }
     //,{key:"Close", label:"Close"}
 	    ];
 
@@ -95,6 +101,45 @@ Event.addListener(window, "load", function() {
     layout.render();
 
 });
+
+function taTransform(progressFn) {
+    var data = copy(ETFTable.initialData).results;
+    var length = data.length;
+    var i = 0;
+    var timeoutFreq = 2000;
+    var timeoutLength = 0;
+    
+    (function() {
+        var start;
+        start = new Date().getTime();
+        for (; i < length; i++) {
+            var series = data[i].Closes.split(',');
+//            with (data[i]) {
+                linR5 = TA.LinearReg(series.slice(0, 82), 5);
+                //linR10 = TA.LinearReg(series.slice(0, 82), 10);
+                linR20 = TA.LinearReg(series.slice(0, 82), 20);
+                //linR40 = TA.LinearReg(series.slice(0, 82), 40);
+                linR80 = TA.LinearReg(series.slice(0, 82), 80);
+
+                emaOfLinR5 = TA.EMAverage(linR5.slice(0, 25), 3);
+                //emaOfLinR10 = TA.EMAverage(linR10.slice(0, 12), 8);
+                emaOfLinR20 = TA.EMAverage(linR20.slice(0, 40), 3);
+                //emaOfLinR40 = TA.EMAverage(linR40.slice(0, 42), 8);
+                emaOfLinR80 = TA.EMAverage(linR80.slice(0, 82), 3);
+
+                data[i].diffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(emaOfLinR5[0], emaOfLinR20[0]), 3);
+                data[i].diffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(emaOfLinR20[0], emaOfLinR80[0]), 3);
+//            }
+            if (new Date().getTime() - start > timeoutFreq) {
+                i++;
+                setTimeout(arguments.callee, timeoutLength);
+                break;
+            }
+        }
+        progressFn(i, length);
+    })();
+    return data;
+}
 
 function transformRawETFData(initialData) {
 
@@ -134,19 +179,19 @@ function transformRawETFData(initialData) {
 
                     row.Last = arrClose[0];
                     row.Previous = arrClose[1];
-
+                    
                     //EMA 5/15
                     fast = "5"; slow = "15";
                     ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast)+3), parseInt(fast));
                     ETFTable.tempData.slowSeries = TA.EMAverage(arrClose.slice(0, parseInt(slow) + 3), parseInt(slow));
-
+                    
                     tmpCrossObj["EMAverageFast"] = ETFTable.tempData.fastSeries[0];
                     tmpCrossObj["EMAverageFast_Prev"] = ETFTable.tempData.fastSeries[1];
                     tmpCrossObj["EMAverageSlow"] = ETFTable.tempData.slowSeries[0];
                     tmpCrossObj["EMAverageSlow_Prev"] = ETFTable.tempData.slowSeries[1];
                     row["EMAverage" + fast + "CrossoverEMAverage" + slow + "Data"] = tmpCrossObj;
                     row["PercentEMA" + fast + "Over" + slow] = TA.Helpers.roundDecimal(((tmpCrossObj.EMAverageFast - tmpCrossObj.EMAverageSlow) / tmpCrossObj.EMAverageSlow) * 100);
-
+                    
                     //EMA 10/30
                     fast = "10"; slow = "30";
                     ETFTable.tempData.fastSeries = TA.EMAverage(arrClose.slice(0, parseInt(fast) + 3), parseInt(fast));

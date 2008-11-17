@@ -52,7 +52,7 @@ var TA = {
 
     Sum: function(series, period) {
         var retVal = [];
-        var _src = ([]).concat(series);
+        var _src = series;
         var _iSum = 0;
         if (typeof (period) !== 'number') {
             period = _src.length;
@@ -77,9 +77,10 @@ var TA = {
         if (typeof (period) !== 'number') {
             period = _src.length;
         }
+        var sums = TA.Sum(_src, period);
         for (var i = 0, len = _src.length; i < len; i++) {
             if ((i + period) <= len) {
-                retVal.push(TA.Helpers.roundDecimal(TA.Sum(_src.slice(i, i + period))[0] / period));
+                retVal.push(TA.Helpers.roundDecimal(sums[i] / period));
             } else {
                 retVal.push(null);
             }
@@ -112,6 +113,33 @@ var TA = {
         return retVal;
     },
 
+//    LinearReg: function(series, period) {
+//        var retVal = [];
+//        var _src = ([]).concat(series);
+//        _src.reverse();
+//        if (typeof (period) !== 'number') {
+//            period = _src.length;
+//        }
+//        var sumX = period * (period - 1) * 0.5;
+//        var divisor = sumX * sumX - period * period * (period - 1) * (2 * period - 1) / 6;
+//        var sumXY, slope, intercept, sum;
+//        var sums = TA.Sum(_src, period);
+//        for (var i = 0, len = _src.length; i < len; i++) {
+//            if (i >= period - 1) {
+//                sumXY = 0;
+//                for (var count = 0; count < period; count++) {
+//                    sumXY += count * parseFloat(_src[i - count]);
+//                }
+//                slope = (period * sumXY - sumX * sums[i]) / divisor;
+//                intercept = (sums[i] - slope * sumX) / period;
+//                retVal.push(TA.Helpers.roundDecimal(intercept + slope * (period - 1)));
+//            } else {
+//                retVal.push(null);
+//            }
+//        }
+//        retVal.reverse();
+//        return retVal;
+//    },
     LinearReg: function(series, period) {
         var retVal = [];
         var _src = ([]).concat(series);
