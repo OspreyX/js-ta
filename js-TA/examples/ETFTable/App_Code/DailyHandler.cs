@@ -23,7 +23,7 @@ public class DailyHandler : JSONDataHandler
             HttpContext.Current.Cache.Insert("DailyBar.GetCurrentDailyBars",
                         data,
                         null,
-                        DateTime.UtcNow.AddMinutes(5.0),
+                        DateTime.UtcNow.AddMinutes(10.0),
                         System.Web.Caching.Cache.NoSlidingExpiration);
         }
 
