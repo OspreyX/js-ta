@@ -9,6 +9,14 @@ var lib = YAHOO, Dom = lib.util.Dom, Event = lib.util.Event, ETFTable = {};
 ETFTable.expandedData = {}; ETFTable.tempData = {}; ETFTable.initialData = {};
 ETFTable.expandComplete = new lib.util.CustomEvent("expandComplete");
 
+ETFTable.dataConfig = {
+    list: "Results",
+    properties: [
+        { name: "Ticker", sourceProperty: "Ticker" },
+        { name: "Last", sourceProperty: "CloseSeries" }
+    ]
+};
+
 Event.onDOMReady(function() {
     
     var callback =
@@ -62,7 +70,7 @@ ETFTable.expandComplete.subscribe( function(evt, args) {
     // Define the data schema
     myDataSource.responseSchema = {
         resultsList: "Results", // Dot notation to results array
-        fields: ["Ticker", "Last", "Previous", "AdjustedClosePrice", "diffEma1Over2", "Volume"], // Field names
+        fields: ["Ticker", "Last", "Previous", "AdjustedClosePrice", "diffEma1Over2", "diffEma2Over3", "Volume"], // Field names
         metaFields: {                       // optional or "magic" meta
             totalRecords: "ResultSet.TotalRecords",
             sortDirection: "ResultSet.SortDirection",
@@ -73,34 +81,9 @@ ETFTable.expandComplete.subscribe( function(evt, args) {
         // do whatever you want with oParsedResponse.
         // The other arguments are there for reference, in case you need some extra information
         // Whatever you return will be what the DataTable gets
-        //return transform(oParsedResponse);
 
-        //return transformRawETFData(oParsedResponse);
-        //ETFTable.initialData = copy(oParsedResponse);
-        //ETFTable.expandedData = copy(oParsedResponse);
-        //ETFTable.expandedData.results = [];
-        //ETFTable.tempData.expandComplete = false;
-        //        var percentComplete;
-        //        taTransform(
-        //            function(value, total) {
-        //                percentComplete = (100 * value / total);
-        //            },
-        //            function() {
-        //                ETFTable.tempData.expandComplete = true;
-        //            });
-        //        while (ETFTable.tempData.expandComplete == false) {
-        //            setTimeout((function() { return; }), 500);
-        //        }
-
+        //waitComplete();
         return oParsedResponse;
-        //        transform2(0);
-        //        var waitIterCounter = 1;
-        //        while (!ETFTable.tempData.expandComplete) {
-        //            //setTimeout('stillWaiting()', 100);
-        //            waitIterCounter = waitIterCounter + 1;
-        //        }
-        //        waitComplete();
-        //        return ETFTable.expandedData;
     };
 
     var myColumnDefs = [
@@ -108,7 +91,7 @@ ETFTable.expandComplete.subscribe( function(evt, args) {
 	        , { key: "Last", label: "Last", sortable: true }
 			, { key: "Previous", label: "Previous", sortable: true }
 	        , { key: "diffEma1Over2", label: "EMA 5/20 %", sortable: true }
-    //, { key: "diffEma2Over3", label: "EMA 20/80 %", sortable: true }
+            , { key: "diffEma2Over3", label: "EMA 20/40 %", sortable: true }
     //            , { key: "PercentEMA15Over45", label: "EMA 15/45 %", sortable: true }
     //            , { key: "PercentEMA20Over60", label: "EMA 20/60 %", sortable: true }
     //            , { key: "PercentEMA25Over75", label: "EMA 25/75 %", sortable: true }
@@ -132,7 +115,7 @@ ETFTable.expandComplete.subscribe( function(evt, args) {
 
 });
 
-function taTransform(progressFn, callbackFn) {
+function taTransform(initialData, config, progressFn, callbackFn) {
     ETFTable.expandedData = copy(ETFTable.initialData)
     var data = ETFTable.expandedData.Results;
     var length = data.length;
@@ -153,14 +136,14 @@ function taTransform(progressFn, callbackFn) {
             //linR40 = TA.LinearReg(series.slice(0, 82), 40);
             //linR80 = TA.LinearReg(series.slice(0, 82), 80);
 
-            emaOfLinR5 = TA.EMAverage(series.slice(0, 25), 3);
+            emaOfLinR5 = TA.EMAverage(series.slice(0, 25), 5);
             //emaOfLinR10 = TA.EMAverage(linR10.slice(0, 12), 8);
-            emaOfLinR20 = TA.EMAverage(series.slice(0, 40), 3);
-            //emaOfLinR40 = TA.EMAverage(linR40.slice(0, 42), 8);
+            emaOfLinR20 = TA.EMAverage(series.slice(0, 40), 20);
+            emaOfLinR40 = TA.EMAverage(series.slice(0, 60), 40);
             //emaOfLinR80 = TA.EMAverage(linR80.slice(0, 82), 3);
 
-            data[i].diffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(emaOfLinR5[0], emaOfLinR20[0]), 3);
-            //data[i].diffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(emaOfLinR20[0], emaOfLinR80[0]), 3);
+            data[i].diffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(emaOfLinR5[0], emaOfLinR20[0]), 2);
+            data[i].diffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(emaOfLinR20[0], emaOfLinR40[0]), 2);
             //            }
             ETFTable.expandedData.Results[i] = data[i];
             if (new Date().getTime() - start > timeoutFreq) {

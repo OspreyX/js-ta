@@ -124,16 +124,16 @@
                        //linR10 = TA.LinearReg(series.slice(0, 82), 10);
                        linR20 = TA.LinearReg(series.slice(0, 82), 20);
                        //linR40 = TA.LinearReg(series.slice(0, 82), 40);
-                       linR80 = TA.LinearReg(series.slice(0, 82), 80);
+                       //linR80 = TA.LinearReg(series.slice(0, 82), 80);
 
                        emaOfLinR5 = TA.EMAverage(linR5.slice(0, 25), 3);
                        //emaOfLinR10 = TA.EMAverage(linR10.slice(0, 12), 8);
                        emaOfLinR20 = TA.EMAverage(linR20.slice(0, 40), 3);
                        //emaOfLinR40 = TA.EMAverage(linR40.slice(0, 42), 8);
-                       emaOfLinR80 = TA.EMAverage(linR80.slice(0, 82), 3);
+                       //emaOfLinR80 = TA.EMAverage(linR80.slice(0, 82), 3);
 
-                       diffEma1Over2 = TA.Helpers.roundDecimal( TA.Helpers.percentDiff(emaOfLinR5, emaOfLinR20), 3);
-                       diffEma2Over3 = TA.Helpers.roundDecimal( TA.Helpers.percentDiff(emaOfLinR20, emaOfLinR80), 3);
+                       diffEma1Over2 = TA.Helpers.roundDecimal( TA.Helpers.percentDiff(emaOfLinR5[0], emaOfLinR20[0]), 3);
+                       //diffEma2Over3 = TA.Helpers.roundDecimal( TA.Helpers.percentDiff(emaOfLinR20, emaOfLinR80), 3);
                     }
                     if (new Date().getTime() - start > timeoutFreq) {
                        i++;
