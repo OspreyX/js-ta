@@ -5,28 +5,88 @@
 /**
 * @author ndavis
 */
-var lib = YAHOO, Dom = lib.util.Dom, Event = lib.util.Event, ETFTable = {};
-ETFTable.expandedData = {}; ETFTable.tempData = {}; ETFTable.initialData = {};
-ETFTable.expandComplete = new lib.util.CustomEvent("expandComplete");
+
+var lib = YAHOO, Dom = lib.util.Dom, Event = lib.util.Event;
+function copy(obj) {
+    return lib.lang.JSON.parse(lib.lang.JSON.stringify(obj));
+}
+
+ETFTable.addArrayMethods = function() {
+    Array.prototype.Sum = function(period) {
+        return TA.Sum(this, period);
+    };
+    Array.prototype.SMAverage = function(period) {
+        return TA.SMAverage(this, period);
+    };
+    Array.prototype.EMAverage = function(period) {
+        return TA.EMAverage(this, period);
+    };
+    Array.prototype.LinearReg = function(period) {
+        return TA.LinearReg(this, period);
+    };
+    Array.prototype.Roc = function(period) {
+        return TA.Roc(this, period);
+    };
+};
 
 ETFTable.dataConfig = {
     list: "Results",
     properties: [
-        { name: "Ticker", source: "Ticker", allowRemoveCol: false, allowRemoveProp: false },
-        { name: "CloseSeries", source: "Closes.split(',')", showCol: false, allowRemoveProp: false },
-        { name: "Last", source: "CloseSeries[0]", showCol: true, allowRemoveCol: true },
-        { name: "EMA5overEMA20Data", source: "CreateCrossoverData(CloseSeries.Ema(5), CloseSeries.Ema(20))", formatter: ETFTable.formatters.formatCrossover }
+        { name: "Ticker", value: "Ticker", allowRemoveCol: false, allowRemoveProp: false },
+        { name: "CloseSeries", value: "Closes.split(',')", showCol: false, allowRemoveProp: false },
+        { name: "Last", value: "CloseSeries[0]" },
+        { name: "Previous", value: "CloseSeries[1]" }//,
+        //{ name: "EMA5overEMA20Data", value: "CreateCrossoverData(CloseSeries.EMAverage(5), CloseSeries.EMAverage(20))", formatter: ETFTable.formatters.formatCrossover }
     ]
 };
 
+ETFTable.doTransform = function(initialData, config, progressFn, callbackFn) {
+    ETFTable.expandedData = copy(initialData)
+    var data = ETFTable.expandedData.Results;
+    var length = data.length;
+    var i = 0;
+    var timeoutFreq = 2000;
+    var timeoutLength = 0;
+    var callbackCalled = false;
+
+    (function() {
+        var start;
+        start = new Date().getTime();
+        for (; i < length; i++) {
+            var series = data[i].Closes.split(',');
+            ema5 = TA.EMAverage(series.slice(0, 25), 5);
+            ema20 = TA.EMAverage(series.slice(0, 40), 20);
+            ema40 = TA.EMAverage(series.slice(0, 60), 40);
+            data[i].diffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema5[0], ema20[0]), 2);
+            data[i].diffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema20[0], ema40[0]), 2);
+            
+            ETFTable.expandedData.Results[i] = data[i];
+            if (new Date().getTime() - start > timeoutFreq) {
+                i++;
+                setTimeout(arguments.callee, timeoutLength);
+                break;
+            }
+        }
+        progressFn(i, length);
+        if (i >= length && callbackCalled == false) {
+            callbackFn(ETFTable.expandedData);
+            callbackCalled = true;
+        }
+    })();
+    return true;
+};
+
 Event.onDOMReady(function() {
-    
+    waiting();
     var callback =
     {
         success: function(o) {
             ETFTable.initialData = YAHOO.lang.JSON.parse(o.responseText).ResultSet;
             var percentComplete;
-            taTransform(
+            ETFTable.addArrayMethods();
+            ETFTable.doTransform(
+                ETFTable.initialData,
+                ETFTable.dataConfig,
                 function(value, total) {
                     percentComplete = (100 * value / total);
                 },
@@ -35,7 +95,7 @@ Event.onDOMReady(function() {
                     ETFTable.expandComplete.fire(o);
                 });
         },
-        failure: function(o) { alert("Huge Problem!!!"); },
+        failure: function(o) { alert("Cannot Connect to Data Source. Please try again later."); },
         argument: ["ARG_DATA"]
     }
     var sUrl = "js_handlers/DailyHandler.ashx";
@@ -43,8 +103,7 @@ Event.onDOMReady(function() {
 });
 
 // defer instantiation
-ETFTable.expandComplete.subscribe( function(evt, args) {
-//Event.addListener(ETFTable.expandedData, "expandComplete", function(data) {
+ETFTable.expandComplete.subscribe(function(evt, args) {
 
     var myDataTableDeferred = new lib.util.Element('dataTableContainer');
 
@@ -52,7 +111,7 @@ ETFTable.expandComplete.subscribe( function(evt, args) {
         units: [
                 { position: 'top', height: 70, body: 'top1', gutter: '0px', collapse: false, resize: false },
                 { position: 'center', body: 'center1', gutter: '2px', scroll: false },
-				{ position: 'left', body: 'menu', header: '', width: 130, gutter: '2px', scroll: true, collapse: true, animate: true },
+				{ position: 'left', body: 'menu', header: '', width: 130, gutter: '2px', scroll: true, collapse: true, animate: false },
 				{ position: 'bottom', body: 'footer', height: 36, gutter: '2px', scroll: false, collapse: false }
             ]
     });
@@ -94,27 +153,21 @@ ETFTable.expandComplete.subscribe( function(evt, args) {
 			, { key: "Previous", label: "Previous", sortable: true }
 	        , { key: "diffEma1Over2", label: "EMA 5/20 %", sortable: true }
             , { key: "diffEma2Over3", label: "EMA 20/40 %", sortable: true }
-    //            , { key: "PercentEMA15Over45", label: "EMA 15/45 %", sortable: true }
-    //            , { key: "PercentEMA20Over60", label: "EMA 20/60 %", sortable: true }
-    //            , { key: "PercentEMA25Over75", label: "EMA 25/75 %", sortable: true }
-    //            , { key: "PercentEMA30Over90", label: "EMA 30/90 %", sortable: true }
-    //            , { key: "PercentEMA35Over105", label: "EMA 35/105 %", sortable: true }
-    //            , { key: "PercentEMA40Over120", label: "EMA 40/120 %", sortable: true }
-    //,{key:"Close", label:"Close"}
 	    ];
 
     var initDataTable = function(h) {
 
         myDataTableDeferred = new lib.widget.DataTable("dataTableContainer", myColumnDefs, myDataSource, {
+            paginator: new lib.widget.Paginator({ rowsPerPage: 100 }),
             scrollable: true,
             height: h + "px",
             width: "99.9%",
-            renderLoopSize: 125
+            renderLoopSize: 25
         });
     };
 
     layout.render();
-
+    waitComplete();
 });
 
 function taTransform(initialData, config, progressFn, callbackFn) {
@@ -167,14 +220,3 @@ function taTransform(initialData, config, progressFn, callbackFn) {
 //function returnEval(codeToEval) {
 //    return
 //}
-
-function stillWaiting() {
-    document.getElementById('menu-list').style.display = 'hidden';
-}
-//function waitComplete() {
-//    document.getElementById('menu-list').style.display = 'block';
-//}
-
-function copy(obj) {
-    return lib.lang.JSON.parse( lib.lang.JSON.stringify( obj ) );
-}

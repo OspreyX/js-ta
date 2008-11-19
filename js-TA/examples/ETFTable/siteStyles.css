@@ -10,12 +10,39 @@ body {
 {
     background-color: #FF9999;
 }
-.yui-layout-unit-left div.yui-layout-hd {
+
+#waitDialog
+{
+    width: 250px;
+    vertical-align: middle;
+}
+#waitDialog .bd
+{
+    height: 100px;
+    vertical-align: middle;
+}
+#waitDialog .bd span
+{
+    text-align:left;
+}
+
+.yui-skin-sam .yui-layout-unit-left .yui-layout-hd 
+{
+	background:#C7C6E3 url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0 0;
 	height:24px;
 }
-.yui-layout-unit-top div.yui-layout-hd {
+.yui-layout-unit-top div.yui-layout-hd 
+{
 	height: 0px;
 }
+.yui-skin-sam .yui-layout-unit-top .yui-layout-bd
+{
+    background-position: 0 bottom;
+    background: #C7C6E3 url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0 0;
+    border: 1px solid #808080;
+    color: #211F3F;
+}
+
 .yui-layout-unit-bottom div.yui-layout-hd {
 	height: 0px;
 }
