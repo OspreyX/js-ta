@@ -12,8 +12,10 @@ ETFTable.expandComplete = new lib.util.CustomEvent("expandComplete");
 ETFTable.dataConfig = {
     list: "Results",
     properties: [
-        { name: "Ticker", sourceProperty: "Ticker" },
-        { name: "Last", sourceProperty: "CloseSeries" }
+        { name: "Ticker", source: "Ticker", allowRemoveCol: false, allowRemoveProp: false },
+        { name: "CloseSeries", source: "Closes.split(',')", showCol: false, allowRemoveProp: false },
+        { name: "Last", source: "CloseSeries[0]", showCol: true, allowRemoveCol: true },
+        { name: "EMA5overEMA20Data", source: "CreateCrossoverData(CloseSeries.Ema(5), CloseSeries.Ema(20))", formatter: ETFTable.formatters.formatCrossover }
     ]
 };
 

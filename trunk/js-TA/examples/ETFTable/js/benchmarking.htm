@@ -75,8 +75,8 @@
            length = 800;
            innerLength = 201;
            iterations = 1;
-           timeoutLength = 0;
-           timeoutFreq = 2500
+           timeoutLength = 20;
+           timeoutFreq = 2000;
 
            data = [];
            el = document.getElementById("progressbar").getElementsByTagName('div')[0];
@@ -120,9 +120,9 @@
                  for (; i < length; i++) {
                     var series = data[i].series;
                     with (data[i]) {
-                       linR5 = TA.LinearReg(series.slice(0, 82), 5);
+                       linR5 = TA.LinearReg(series.slice(0, 40), 5);
                        //linR10 = TA.LinearReg(series.slice(0, 82), 10);
-                       linR20 = TA.LinearReg(series.slice(0, 82), 20);
+                       linR20 = TA.LinearReg(series.slice(0, 40), 20);
                        //linR40 = TA.LinearReg(series.slice(0, 82), 40);
                        //linR80 = TA.LinearReg(series.slice(0, 82), 80);
 
@@ -132,7 +132,7 @@
                        //emaOfLinR40 = TA.EMAverage(linR40.slice(0, 42), 8);
                        //emaOfLinR80 = TA.EMAverage(linR80.slice(0, 82), 3);
 
-                       diffEma1Over2 = TA.Helpers.roundDecimal( TA.Helpers.percentDiff(emaOfLinR5[0], emaOfLinR20[0]), 3);
+                       diffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(emaOfLinR5[0], emaOfLinR20[0]), 3);
                        //diffEma2Over3 = TA.Helpers.roundDecimal( TA.Helpers.percentDiff(emaOfLinR20, emaOfLinR80), 3);
                     }
                     if (new Date().getTime() - start > timeoutFreq) {
