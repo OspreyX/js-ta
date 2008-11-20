@@ -109,7 +109,7 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
 
     var layout = new lib.widget.Layout({
         units: [
-                { position: 'top', height: 70, body: 'top1', gutter: '0px', collapse: false, resize: false },
+                { position: 'top', height: 71, body: 'top1', gutter: '0px', collapse: false, resize: false },
                 { position: 'center', body: 'center1', gutter: '2px', scroll: false },
 				{ position: 'left', body: 'menu', header: '', width: 130, gutter: '2px', scroll: true, collapse: true, animate: false },
 				{ position: 'bottom', body: 'footer', height: 36, gutter: '2px', scroll: false, collapse: false }
@@ -164,10 +164,10 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
             width: "99.9%",
             renderLoopSize: 25
         });
+        waitComplete();
     };
 
     layout.render();
-    waitComplete();
 });
 
 function taTransform(initialData, config, progressFn, callbackFn) {

@@ -26,9 +26,34 @@ body {
     text-align:left;
 }
 
+#top1
+{
+	margin-left: 9px;
+	margin-top:0px;
+}
+#top1 h3
+{
+	margin-top: 20px;
+	margin-bottom: 15px;
+	font-family: 'Century Gothic';
+	font-size: 16pt;
+	font-weight: 900;
+	text-decoration: underline overline;
+	line-height: 2px;
+}
+#menu-list
+{
+	margin-left: 4px;
+	margin-top: 15px;
+}
+#menu-list li
+{
+	margin:3px;
+}
+
 .yui-skin-sam .yui-layout-unit-left .yui-layout-hd 
 {
-	background:#C7C6E3 url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0 0;
+	background:#C7C6E3 url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0 -1303px;
 	height:24px;
 }
 .yui-layout-unit-top div.yui-layout-hd 
@@ -37,10 +62,10 @@ body {
 }
 .yui-skin-sam .yui-layout-unit-top .yui-layout-bd
 {
-    background-position: 0 bottom;
-    background: #C7C6E3 url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0 0;
-    border: 1px solid #808080;
-    color: #211F3F;
+	 background-position: 0 bottom;
+	 background: #C7C6E3 url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0 -1300px;
+	 border: 1px solid #808080;
+	 color: #211F3F;
 }
 
 .yui-layout-unit-bottom div.yui-layout-hd {
