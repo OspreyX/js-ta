@@ -38,8 +38,12 @@ body {
 	font-family: 'Century Gothic';
 	font-size: 16pt;
 	font-weight: 900;
-	text-decoration: underline overline;
-	line-height: 2px;
+	text-decoration: overline;
+	line-height: 3px;
+}
+#top1 .overlined
+{
+    text-decoration: overline;
 }
 #menu-list
 {
@@ -53,8 +57,10 @@ body {
 
 #pagerContainer
 {
-	height:40px;
+	height:35px;
 	width:100%;
+	margin:2px;
+	margin-left:5px;
 }
 
 .yui-skin-sam .yui-layout-unit-left .yui-layout-hd 
