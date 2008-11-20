@@ -116,10 +116,10 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
             ]
     });
     layout.on("resize", function() {
-        myDataTableDeferred.set('height', (this.getSizes().center.h - 62) + 'px');
+        myDataTableDeferred.set('height', (this.getSizes().center.h - 57) + 'px');
     });
     layout.on("render", function() {
-        initDataTable(layout.getSizes().center.h - 62);
+        initDataTable(layout.getSizes().center.h - 57);
     });
 
 
