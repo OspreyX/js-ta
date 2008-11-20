@@ -111,15 +111,15 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
         units: [
                 { position: 'top', height: 71, body: 'top1', gutter: '0px', collapse: false, resize: false },
                 { position: 'center', body: 'center1', gutter: '2px', scroll: false },
-				{ position: 'left', body: 'menu', header: '', width: 130, gutter: '2px', scroll: true, collapse: true, animate: false },
+				{ position: 'left', body: 'menu', header: '', width: 130, gutter: '2px', scroll: true, collapse: true, animate: false, resize: true },
 				{ position: 'bottom', body: 'footer', height: 36, gutter: '2px', scroll: false, collapse: false }
             ]
     });
     layout.on("resize", function() {
-        myDataTableDeferred.set('height', (this.getSizes().center.h - 33) + 'px');
+        myDataTableDeferred.set('height', (this.getSizes().center.h - 62) + 'px');
     });
     layout.on("render", function() {
-        initDataTable(layout.getSizes().center.h - 33);
+        initDataTable(layout.getSizes().center.h - 62);
     });
 
 
@@ -158,7 +158,7 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
     var initDataTable = function(h) {
 
         myDataTableDeferred = new lib.widget.DataTable("dataTableContainer", myColumnDefs, myDataSource, {
-            paginator: new lib.widget.Paginator({ rowsPerPage: 100 }),
+        paginator: new lib.widget.Paginator({ rowsPerPage: 100, containers: 'pagerContainer' }),
             scrollable: true,
             height: h + "px",
             width: "99.9%",

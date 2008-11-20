@@ -26,6 +26,7 @@
     <div id="center1">
         <div id="dataTableContainer">
         </div>
+        <div id="pagerContainer"></div>
     </div>
     <div id="menu">
         <div id="menu-list">
