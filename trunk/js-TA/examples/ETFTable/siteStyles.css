@@ -51,6 +51,12 @@ body {
 	margin:3px;
 }
 
+#pagerContainer
+{
+	height:40px;
+	width:100%;
+}
+
 .yui-skin-sam .yui-layout-unit-left .yui-layout-hd 
 {
 	background:#C7C6E3 url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0 -1303px;
