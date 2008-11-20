@@ -29,9 +29,10 @@
     </div>
     <div id="menu">
         <div id="menu-list">
-            <li>Link One</li>
-            <li>Link Two</li>
-            <li>Link Three</li>
+            <li>Save Screen</li>
+            <li>Add Filter</li>
+            <li>Add Column</li>
+            
         </div>
     </div>
 </asp:Content>
@@ -87,7 +88,6 @@ function waitComplete() {
     
     <!-- Source File for Paginator -->
     <script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/paginator/paginator-min.js"></script>
-
 
     <!-- page specific script -->
     <script src="js/js-TA.js" type="text/javascript"></script>
