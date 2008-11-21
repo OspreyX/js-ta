@@ -45,15 +45,22 @@ ETFTable.doTransform = function(initialData, config, progressFn, callbackFn) {
     ETFTable.expandedData = copy(initialData)
     var data = ETFTable.expandedData.Results;
     var length = data.length;
+    var propsLength = ETFTable.dataConfig.properties.length, prop;
     var i = 0;
     var timeoutFreq = 2000;
     var timeoutLength = 0;
     var callbackCalled = false;
 
     (function() {
-        var start;
-        start = new Date().getTime();
+        var start = new Date().getTime();
+        var props
         for (; i < length; i++) {
+
+            for (var iCfg; iCfg < propsLength; iCfg++) {
+                prop = ETFTable.dataConfig.properties[iCfg];
+                data[i][prop.name] = eval("data[i]." + prop.value);
+            }
+
             var series = data[i].Closes.split(',');
             data[i].Last = series[0];
             data[i].Perf1 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[1]), 2);
@@ -61,7 +68,7 @@ ETFTable.doTransform = function(initialData, config, progressFn, callbackFn) {
             data[i].Perf3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[19]), 2);
             data[i].Perf4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[59]), 2);
             data[i].Perf5 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[119]), 2);
-            
+
             ema5 = TA.EMAverage(series.slice(0, 25), 5);
             ema20 = TA.EMAverage(series.slice(0, 40), 20);
             ema50 = TA.EMAverage(series.slice(0, 70), 50);
