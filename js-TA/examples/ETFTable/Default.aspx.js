@@ -1,6 +1,7 @@
 /// <reference path="js/ETFTables.TA.js" />
 /// <reference path="js/lib/yui/yahoo-dom-event/yahoo-dom-event.js" />
 /// <reference path="js/lib/yui/connection/connection.js" />
+/// <reference path="js/js-TA.js" />
 
 /**
 * @author ndavis
@@ -54,12 +55,21 @@ ETFTable.doTransform = function(initialData, config, progressFn, callbackFn) {
         start = new Date().getTime();
         for (; i < length; i++) {
             var series = data[i].Closes.split(',');
+            data[i].Last = series[0];
+            data[i].Perf1 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[1]), 2);
+            data[i].Perf2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[4]), 2);
+            data[i].Perf3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[19]), 2);
+            data[i].Perf4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[59]), 2);
+            data[i].Perf5 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[119]), 2);
+            
             ema5 = TA.EMAverage(series.slice(0, 25), 5);
             ema20 = TA.EMAverage(series.slice(0, 40), 20);
-            ema40 = TA.EMAverage(series.slice(0, 60), 40);
-            data[i].diffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema5[0], ema20[0]), 2);
-            data[i].diffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema20[0], ema40[0]), 2);
-            
+            ema50 = TA.EMAverage(series.slice(0, 70), 50);
+            ema120 = TA.EMAverage(series.slice(0, 140), 120);
+            data[i].DiffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema5[0], ema20[0]), 2);
+            data[i].DiffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema20[0], ema50[0]), 2);
+            data[i].DiffEma3Over4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema50[0], ema120[0]), 2);
+
             ETFTable.expandedData.Results[i] = data[i];
             if (new Date().getTime() - start > timeoutFreq) {
                 i++;
@@ -131,7 +141,7 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
     // Define the data schema
     myDataSource.responseSchema = {
         resultsList: "Results", // Dot notation to results array
-        fields: ["Ticker", "Last", "Previous", "AdjustedClosePrice", "diffEma1Over2", "diffEma2Over3", "Volume"], // Field names
+        fields: ["Ticker", "Last", "AdjustedClosePrice", "Volume", "Perf1", "Perf2", "Perf3", "Perf4", "Perf5", "DiffEma1Over2", "DiffEma2Over3", "DiffEma3Over4"], // Field names
         metaFields: {                       // optional or "magic" meta
             totalRecords: "ResultSet.TotalRecords",
             sortDirection: "ResultSet.SortDirection",
@@ -150,9 +160,15 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
     var myColumnDefs = [
 	        { key: "Ticker", label: "Ticker", sortable: true }
 	        , { key: "Last", label: "Last", sortable: true }
-			, { key: "Previous", label: "Previous", sortable: true }
-	        , { key: "diffEma1Over2", label: "EMA 5/20 %", sortable: true }
-            , { key: "diffEma2Over3", label: "EMA 20/40 %", sortable: true }
+			, { key: "Perf1", label: "1 Day % Perf", sortable: true }
+			, { key: "Perf2", label: "1 Week % Perf", sortable: true }
+			, { key: "Perf3", label: "4 Week % Perf", sortable: true }
+			, { key: "Perf4", label: "12 Week % Perf", sortable: true }
+			, { key: "Perf5", label: "24 Week % Perf", sortable: true }
+	        , { key: "DiffEma1Over2", label: "EMA 5/20 %", sortable: true }
+            , { key: "DiffEma2Over3", label: "EMA 20/50 %", sortable: true }
+            , { key: "DiffEma3Over4", label: "EMA 50/120 %", sortable: true }
+            , { key: "Volume", label: "Volume", sortable: true }
 	    ];
 
     var initDataTable = function(h) {
