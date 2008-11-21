@@ -166,7 +166,7 @@ public class DailyBar : Daily, IOhlcBar
              new DailyBar()
              {
                 AdjustedClosePrice = listTicker[0].AdjustedClosePrice,
-                Closes = listTicker.Aggregate(String.Empty, (r, p) => r += "," + p.ClosePrice.ToString().TrimEnd('0','.')).TrimStart(','),
+                Closes = listTicker.Aggregate(String.Empty, (r, p) => r += "," + Decimal.Round(p.ClosePrice,2).ToString()).TrimStart(','),
                 Date = listTicker[0].Date,
                 HighPrice = listTicker[0].HighPrice,
                 LowPrice = listTicker[0].LowPrice,
