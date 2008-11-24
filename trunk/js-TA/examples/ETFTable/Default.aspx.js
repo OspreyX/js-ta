@@ -37,7 +37,7 @@ ETFTable.dataConfig = {
         { name: "CloseSeries", value: "Closes.split(',')", showCol: false, allowRemoveProp: false },
         { name: "Last", value: "CloseSeries[0]" },
         { name: "Previous", value: "CloseSeries[1]" }//,
-        //{ name: "EMA5overEMA20Data", value: "CreateCrossoverData(CloseSeries.EMAverage(5), CloseSeries.EMAverage(20))", formatter: ETFTable.formatters.formatCrossover }
+        //{ name: "DiffEma1Over2", value: "CreateCrossoverData(CloseSeries.EMAverage(5), CloseSeries.EMAverage(20))", formatter: ETFTable.formatters.formatCrossover }
     ]
 };
 
@@ -56,26 +56,26 @@ ETFTable.doTransform = function(initialData, config, progressFn, callbackFn) {
         var props
         for (; i < length; i++) {
 
-            for (var iCfg; iCfg < propsLength; iCfg++) {
+            for (var iCfg = 0; iCfg < propsLength; iCfg++) {
                 prop = ETFTable.dataConfig.properties[iCfg];
                 data[i][prop.name] = eval("data[i]." + prop.value);
             }
 
-            var series = data[i].Closes.split(',');
-            data[i].Last = series[0];
-            data[i].Perf1 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[1]), 2);
-            data[i].Perf2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[4]), 2);
-            data[i].Perf3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[19]), 2);
-            data[i].Perf4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[59]), 2);
-            data[i].Perf5 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[119]), 2);
+//            var series = data[i].Closes.split(',');
+//            data[i].Last = series[0];
+//            data[i].Perf1 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[1]), 2);
+//            data[i].Perf2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[4]), 2);
+//            data[i].Perf3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[19]), 2);
+//            data[i].Perf4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[59]), 2);
+//            data[i].Perf5 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[119]), 2);
 
-            ema5 = TA.EMAverage(series.slice(0, 25), 5);
-            ema20 = TA.EMAverage(series.slice(0, 40), 20);
-            ema50 = TA.EMAverage(series.slice(0, 70), 50);
-            ema120 = TA.EMAverage(series.slice(0, 140), 120);
-            data[i].DiffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema5[0], ema20[0]), 2);
-            data[i].DiffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema20[0], ema50[0]), 2);
-            data[i].DiffEma3Over4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema50[0], ema120[0]), 2);
+//            ema5 = TA.EMAverage(series.slice(0, 25), 5);
+//            ema20 = TA.EMAverage(series.slice(0, 40), 20);
+//            ema50 = TA.EMAverage(series.slice(0, 70), 50);
+//            ema120 = TA.EMAverage(series.slice(0, 140), 120);
+//            data[i].DiffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema5[0], ema20[0]), 2);
+//            data[i].DiffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema20[0], ema50[0]), 2);
+//            data[i].DiffEma3Over4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema50[0], ema120[0]), 2);
 
             ETFTable.expandedData.Results[i] = data[i];
             if (new Date().getTime() - start > timeoutFreq) {
@@ -148,7 +148,7 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
     // Define the data schema
     myDataSource.responseSchema = {
         resultsList: "Results", // Dot notation to results array
-        fields: ["Ticker", "Last", "AdjustedClosePrice", "Volume", "Perf1", "Perf2", "Perf3", "Perf4", "Perf5", "DiffEma1Over2", "DiffEma2Over3", "DiffEma3Over4"], // Field names
+        fields: [], // Field names
         metaFields: {                       // optional or "magic" meta
             totalRecords: "ResultSet.TotalRecords",
             sortDirection: "ResultSet.SortDirection",
@@ -164,24 +164,35 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
         return oParsedResponse;
     };
 
-    var myColumnDefs = [
-	        { key: "Ticker", label: "Ticker", sortable: true }
-	        , { key: "Last", label: "Last", sortable: true }
-			, { key: "Perf1", label: "1 Day % Perf", sortable: true }
-			, { key: "Perf2", label: "1 Week % Perf", sortable: true }
-			, { key: "Perf3", label: "4 Week % Perf", sortable: true }
-			, { key: "Perf4", label: "12 Week % Perf", sortable: true }
-			, { key: "Perf5", label: "24 Week % Perf", sortable: true }
-	        , { key: "DiffEma1Over2", label: "EMA 5/20 %", sortable: true }
-            , { key: "DiffEma2Over3", label: "EMA 20/50 %", sortable: true }
-            , { key: "DiffEma3Over4", label: "EMA 50/120 %", sortable: true }
-            , { key: "Volume", label: "Volume", sortable: true }
-	    ];
+    //    var myColumnDefs = [
+    //	        { key: "Ticker", label: "Ticker", sortable: true }
+    //	        , { key: "Last", label: "Last", sortable: true }
+    //			, { key: "Perf1", label: "1 Day % Perf", sortable: true }
+    //			, { key: "Perf2", label: "1 Week % Perf", sortable: true }
+    //			, { key: "Perf3", label: "4 Week % Perf", sortable: true }
+    //			, { key: "Perf4", label: "12 Week % Perf", sortable: true }
+    //			, { key: "Perf5", label: "24 Week % Perf", sortable: true }
+    //	        , { key: "DiffEma1Over2", label: "EMA 5/20 %", sortable: true }
+    //            , { key: "DiffEma2Over3", label: "EMA 20/50 %", sortable: true }
+    //            , { key: "DiffEma3Over4", label: "EMA 50/120 %", sortable: true }
+    //            , { key: "Volume", label: "Volume", sortable: true }
+    //	    ];
+
+    var myColumnDefs = [];
+    var propsLength = ETFTable.dataConfig.properties.length, prop, ii = 0;
+    for (var i = 0; i < propsLength; i++) {
+        prop = ETFTable.dataConfig.properties[i];
+        if ((prop.showCol && prop.showCol == true) || typeof (prop.showCol) == 'undefined') {
+            myColumnDefs[ii] = { key: prop.name, label: prop.name, sortable: true };
+            myDataSource.responseSchema.fields[ii] = prop.name;
+            ii++;
+        }
+    }
 
     var initDataTable = function(h) {
 
         myDataTableDeferred = new lib.widget.DataTable("dataTableContainer", myColumnDefs, myDataSource, {
-        paginator: new lib.widget.Paginator({ rowsPerPage: 100, containers: 'pagerContainer' }),
+            paginator: new lib.widget.Paginator({ rowsPerPage: 100, containers: 'pagerContainer' }),
             scrollable: true,
             height: h + "px",
             width: "99.9%",
@@ -192,52 +203,6 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
 
     layout.render();
 });
-
-function taTransform(initialData, config, progressFn, callbackFn) {
-    ETFTable.expandedData = copy(ETFTable.initialData)
-    var data = ETFTable.expandedData.Results;
-    var length = data.length;
-    var i = 0;
-    var timeoutFreq = 2000;
-    var timeoutLength = 0;
-    var callbackCalled = false;
-    
-    (function() {
-        var start;
-        start = new Date().getTime();
-        for (; i < length; i++) {
-            var series = data[i].Closes.split(',');
-            //            with (data[i]) {
-            //linR5 = TA.LinearReg(series.slice(0, 82), 5);
-            //linR10 = TA.LinearReg(series.slice(0, 82), 10);
-            //linR20 = TA.LinearReg(series.slice(0, 82), 20);
-            //linR40 = TA.LinearReg(series.slice(0, 82), 40);
-            //linR80 = TA.LinearReg(series.slice(0, 82), 80);
-
-            emaOfLinR5 = TA.EMAverage(series.slice(0, 25), 5);
-            //emaOfLinR10 = TA.EMAverage(linR10.slice(0, 12), 8);
-            emaOfLinR20 = TA.EMAverage(series.slice(0, 40), 20);
-            emaOfLinR40 = TA.EMAverage(series.slice(0, 60), 40);
-            //emaOfLinR80 = TA.EMAverage(linR80.slice(0, 82), 3);
-
-            data[i].diffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(emaOfLinR5[0], emaOfLinR20[0]), 2);
-            data[i].diffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(emaOfLinR20[0], emaOfLinR40[0]), 2);
-            //            }
-            ETFTable.expandedData.Results[i] = data[i];
-            if (new Date().getTime() - start > timeoutFreq) {
-                i++;
-                setTimeout(arguments.callee, timeoutLength);
-                break;
-            }
-        }
-        progressFn(i, length);
-        if (i >= length && callbackCalled == false) {
-            callbackFn(ETFTable.expandedData);
-            callbackCalled = true;
-        }
-    })();
-    return true;
-}
 
 
 //function returnEval(codeToEval) {
