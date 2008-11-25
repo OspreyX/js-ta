@@ -8,17 +8,18 @@
 */
 
 var lib = YAHOO, Dom = lib.util.Dom, Event = lib.util.Event;
+if (typeof (ETFTable) == 'undefined') {
+    var ETFTable = {};
+}
+ETFTable.expandedData = {}; ETFTable.tempData = {}; ETFTable.initialData = {};
+ETFTable.expandComplete = new lib.util.CustomEvent("expandComplete");
+
 function copy(obj) {
     return lib.lang.JSON.parse(lib.lang.JSON.stringify(obj));
 }
 
 ETFTable.addMethods = function() {
-    PercentDiff = function(val1, val2) {
-        return TA.Helpers.percentDiff(a, b)
-    };
-};
-
-ETFTable.addArrayMethods = function() {
+    //extend Array
     Array.prototype.Sum = function(period) {
         return TA.Sum(this, period);
     };
@@ -34,16 +35,40 @@ ETFTable.addArrayMethods = function() {
     Array.prototype.Roc = function(period) {
         return TA.Roc(this, period);
     };
+
+    //Extend number
+    Number.prototype.roundFloat = function(val, n) {
+        return TA.Helpers.roundDecimal(this, n);
+    };
+
+    //general
+    PercentDiff = function(val1, val2) {
+        return TA.Helpers.percentDiff(val1, val2)
+    };
 };
 
 ETFTable.dataConfig = {
     list: "Results",
+    item: "Item",
     properties: [
-        { name: "Ticker", value: "Ticker", allowRemoveCol: false, allowRemoveProp: false },
-        { name: "CloseSeries", value: "Closes.split(',')", showCol: false, allowRemoveProp: false },
-        { name: "Last", value: "CloseSeries[0]" },
-        { name: "Previous", value: "CloseSeries[1]"}//,
-
+        { name: "Ticker", value: "Item.Ticker", allowRemoveCol: false, allowRemoveProp: false },
+        { name: "CloseSeries", value: "Item.Closes.split(',')", showCol: false, allowRemoveProp: false },
+        { name: "Volume", value: "Item.Volume" },
+        { name: "Last", value: "Item.CloseSeries[0]" },
+        //{ name: "Previous", value: "Item.CloseSeries[1]" },
+        { name: "Perf1", colGroup: "% Performance", label: "1 Day", value: "PercentDiff(Item.CloseSeries[0], Item.CloseSeries[1]).roundFloat()" },
+        { name: "Perf2", colGroup: "% Performance", label: "1 Wk", value: "PercentDiff(Item.CloseSeries[0], Item.CloseSeries[4]).roundFloat()" },
+        { name: "Perf3", colGroup: "% Performance", label: "2 Wk", value: "PercentDiff(Item.CloseSeries[0], Item.CloseSeries[9]).roundFloat()" },
+        { name: "Perf4", colGroup: "% Performance", label: "4 Wk", value: "PercentDiff(Item.CloseSeries[0], Item.CloseSeries[19]).roundFloat()" },
+        { name: "Perf5", colGroup: "% Performance", label: "12 Wk", value: "PercentDiff(Item.CloseSeries[0], Item.CloseSeries[59]).roundFloat()" },
+        { name: "Perf6", colGroup: "% Performance", label: "24 Wk", value: "PercentDiff(Item.CloseSeries[0], Item.CloseSeries[119]).roundFloat()" },
+        { name: "EMA5Series", showCol: false, value: "Item.CloseSeries.slice(0,25).EMAverage(5)" },
+        { name: "EMA15Series", showCol: false, value: "Item.CloseSeries.slice(0,35).EMAverage(15)" },
+        { name: "EMA45Series", showCol: false, value: "Item.CloseSeries.slice(0,65).EMAverage(45)" },
+        { name: "EMA135Series", showCol: false, value: "Item.CloseSeries.slice(0,155).EMAverage(135)" },
+        { name: "Cross1", colGroup: "EMA Crossover - % Fast is over Slow", label: "5/15", value: "PercentDiff(Item.EMA5Series[0],Item.EMA15Series[0]).roundFloat()" },
+        { name: "Cross2", colGroup: "EMA Crossover - % Fast is over Slow", label: "15/45", value: "PercentDiff(Item.EMA15Series[0],Item.EMA45Series[0]).roundFloat()" },
+        { name: "Cross3", colGroup: "EMA Crossover - % Fast is over Slow", label: "45/135", value: "PercentDiff(Item.EMA45Series[0],Item.EMA135Series[0]).roundFloat()" }
     //{ name: "DiffEma1Over2", value: "CreateCrossoverData(CloseSeries.EMAverage(5), CloseSeries.EMAverage(20))", formatter: ETFTable.formatters.formatCrossover }
     ]
 };
@@ -60,12 +85,14 @@ ETFTable.doTransform = function(initialData, config, progressFn, callbackFn) {
 
     (function() {
         var start = new Date().getTime();
-        var props
+        var props, toReplace, valFormula;
         for (; i < length; i++) {
 
             for (var iCfg = 0; iCfg < propsLength; iCfg++) {
                 prop = ETFTable.dataConfig.properties[iCfg];
-                data[i][prop.name] = eval("data[i]." + prop.value);
+                toReplace = new RegExp(ETFTable.dataConfig.item, "gi");
+                valFormula = new String(prop.value).replace(toReplace, "data[i]");
+                data[i][prop.name] = eval(valFormula);
             }
 
             //            var series = data[i].Closes.split(',');
@@ -107,7 +134,7 @@ Event.onDOMReady(function() {
         success: function(o) {
             ETFTable.initialData = YAHOO.lang.JSON.parse(o.responseText).ResultSet;
             var percentComplete;
-            ETFTable.addArrayMethods();
+            ETFTable.addMethods();
             ETFTable.doTransform(
                 ETFTable.initialData,
                 ETFTable.dataConfig,
@@ -186,13 +213,48 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
     //	    ];
 
     var myColumnDefs = [];
-    var propsLength = ETFTable.dataConfig.properties.length, prop, ii = 0;
+    var propsLength = ETFTable.dataConfig.properties.length, prop, colIdx = 0, dsIdx = 0, groupIdx, groupChildren;
     for (var i = 0; i < propsLength; i++) {
         prop = ETFTable.dataConfig.properties[i];
         if ((prop.showCol && prop.showCol == true) || typeof (prop.showCol) == 'undefined') {
-            myColumnDefs[ii] = { key: prop.name, label: prop.name, sortable: true };
-            myDataSource.responseSchema.fields[ii] = prop.name;
-            ii++;
+            if (typeof (prop.colGroup) != 'undefined') {
+                groupIdx = colIdx;
+                for (var j = 0; j < myColumnDefs.length; j++) {
+                    if (typeof (myColumnDefs[j].label) != 'undefined' &&
+                            myColumnDefs[j].label == prop.colGroup) {
+                        groupIdx = j;
+                        break;
+                    }
+                }
+                if (!myColumnDefs[groupIdx] || !myColumnDefs[groupIdx].children) {
+                    groupChildren = [];
+                    colIdx++;
+                } else {
+                    groupChildren = myColumnDefs[groupIdx].children;
+                }
+                groupChildren.push({
+                    key: prop.name,
+                    label: (typeof (prop.label) == 'undefined' ? prop.name : prop.label),
+                    sortable: true,
+                    resizeable: true
+                });
+                myColumnDefs[groupIdx] = {
+                    label: prop.colGroup,
+                    sortable: false,
+                    resizeable: true,
+                    children: groupChildren
+                };
+            } else {
+                myColumnDefs[colIdx] = {
+                    key: prop.name,
+                    label: (typeof (prop.label) == 'undefined' ? prop.name : prop.label),
+                    sortable: true,
+                    resizeable: true
+                };
+                colIdx++;
+            }
+            myDataSource.responseSchema.fields[dsIdx] = prop.name;
+            dsIdx++;
         }
     }
 
@@ -200,6 +262,7 @@ ETFTable.expandComplete.subscribe(function(evt, args) {
 
         myDataTableDeferred = new lib.widget.DataTable("dataTableContainer", myColumnDefs, myDataSource, {
             paginator: new lib.widget.Paginator({ rowsPerPage: 100, containers: 'pagerContainer' }),
+            sortedBy: { key: "Volume", dir: "desc" },
             scrollable: true,
             height: h + "px",
             width: "99.9%",
