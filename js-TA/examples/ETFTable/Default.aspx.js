@@ -12,6 +12,12 @@ function copy(obj) {
     return lib.lang.JSON.parse(lib.lang.JSON.stringify(obj));
 }
 
+ETFTable.addMethods = function() {
+    PercentDiff = function(val1, val2) {
+        return TA.Helpers.percentDiff(a, b)
+    };
+};
+
 ETFTable.addArrayMethods = function() {
     Array.prototype.Sum = function(period) {
         return TA.Sum(this, period);
@@ -36,8 +42,9 @@ ETFTable.dataConfig = {
         { name: "Ticker", value: "Ticker", allowRemoveCol: false, allowRemoveProp: false },
         { name: "CloseSeries", value: "Closes.split(',')", showCol: false, allowRemoveProp: false },
         { name: "Last", value: "CloseSeries[0]" },
-        { name: "Previous", value: "CloseSeries[1]" }//,
-        //{ name: "DiffEma1Over2", value: "CreateCrossoverData(CloseSeries.EMAverage(5), CloseSeries.EMAverage(20))", formatter: ETFTable.formatters.formatCrossover }
+        { name: "Previous", value: "CloseSeries[1]"}//,
+
+    //{ name: "DiffEma1Over2", value: "CreateCrossoverData(CloseSeries.EMAverage(5), CloseSeries.EMAverage(20))", formatter: ETFTable.formatters.formatCrossover }
     ]
 };
 
@@ -61,21 +68,21 @@ ETFTable.doTransform = function(initialData, config, progressFn, callbackFn) {
                 data[i][prop.name] = eval("data[i]." + prop.value);
             }
 
-//            var series = data[i].Closes.split(',');
-//            data[i].Last = series[0];
-//            data[i].Perf1 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[1]), 2);
-//            data[i].Perf2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[4]), 2);
-//            data[i].Perf3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[19]), 2);
-//            data[i].Perf4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[59]), 2);
-//            data[i].Perf5 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[119]), 2);
+            //            var series = data[i].Closes.split(',');
+            //            data[i].Last = series[0];
+            //            data[i].Perf1 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[1]), 2);
+            //            data[i].Perf2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[4]), 2);
+            //            data[i].Perf3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[19]), 2);
+            //            data[i].Perf4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[59]), 2);
+            //            data[i].Perf5 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(series[0], series[119]), 2);
 
-//            ema5 = TA.EMAverage(series.slice(0, 25), 5);
-//            ema20 = TA.EMAverage(series.slice(0, 40), 20);
-//            ema50 = TA.EMAverage(series.slice(0, 70), 50);
-//            ema120 = TA.EMAverage(series.slice(0, 140), 120);
-//            data[i].DiffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema5[0], ema20[0]), 2);
-//            data[i].DiffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema20[0], ema50[0]), 2);
-//            data[i].DiffEma3Over4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema50[0], ema120[0]), 2);
+            //            ema5 = TA.EMAverage(series.slice(0, 25), 5);
+            //            ema20 = TA.EMAverage(series.slice(0, 40), 20);
+            //            ema50 = TA.EMAverage(series.slice(0, 70), 50);
+            //            ema120 = TA.EMAverage(series.slice(0, 140), 120);
+            //            data[i].DiffEma1Over2 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema5[0], ema20[0]), 2);
+            //            data[i].DiffEma2Over3 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema20[0], ema50[0]), 2);
+            //            data[i].DiffEma3Over4 = TA.Helpers.roundDecimal(TA.Helpers.percentDiff(ema50[0], ema120[0]), 2);
 
             ETFTable.expandedData.Results[i] = data[i];
             if (new Date().getTime() - start > timeoutFreq) {
