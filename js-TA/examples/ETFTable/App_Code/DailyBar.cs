@@ -119,12 +119,12 @@ public class DailyBar : Daily, IOhlcBar
       set;
    }
 
-   [DataMember]
-   System.Nullable<long> Volume
-   {
-      get { return base.Volume; }
-      set { base.Volume = value; }
-   }
+   //[DataMember]
+   //System.Nullable<long> Volume
+   //{
+   //   get { return base.Volume; }
+   //   set { base.Volume = value; }
+   //}
    #endregion
 
    public DailyBar()
@@ -150,7 +150,7 @@ public class DailyBar : Daily, IOhlcBar
 
    //}
 
-   public static List<DailyBar> GetCurrentDailyBars()
+   public static IOrderedEnumerable<DailyBar> GetCurrentDailyBars()
    {
       ETFTableDataContext dataContext = new ETFTableDataContext();
       var all = from daily in dataContext.Dailies
@@ -175,6 +175,6 @@ public class DailyBar : Daily, IOhlcBar
                 Volume = listTicker[0].Volume,
              });
       }
-      return currentBars;
+      return currentBars.OrderByDescending(p => p.Volume);
    }
 }

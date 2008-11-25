@@ -42,8 +42,8 @@
     <script type="text/javascript">
 var lib = YAHOO, Dom = lib.util.Dom, Event = lib.util.Event;
 var ETFTable = {};
-ETFTable.expandedData = {}; ETFTable.tempData = {}; ETFTable.initialData = {}; ETFTable.ui = {};
-ETFTable.expandComplete = new lib.util.CustomEvent("expandComplete");
+ETFTable.ui = {};
+
 ETFTable.ui.wait = new lib.widget.Panel("waitDialog",
     {
     fixedcenter: true,
@@ -71,8 +71,8 @@ function waitComplete() {
     </script>
     
     <script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/dragdrop/dragdrop-min.js"></script>
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/connection/connection.js"></script>
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/datasource/datasource.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/connection/connection-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/datasource/datasource-min.js"></script>
     <script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/element/element-beta-min.js"></script>
 
     <!-- Optional Animation Support-->

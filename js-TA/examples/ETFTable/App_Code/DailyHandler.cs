@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web;
+using System.Linq;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ public class DailyHandler : JSONDataHandler
         }
         else
         {
-            data = DailyBar.GetCurrentDailyBars();
+            data = DailyBar.GetCurrentDailyBars().ToList();
             HttpContext.Current.Cache.Insert("DailyBar.GetCurrentDailyBars",
                         data,
                         null,
@@ -27,9 +28,9 @@ public class DailyHandler : JSONDataHandler
                         System.Web.Caching.Cache.NoSlidingExpiration);
         }
 
-        retVal.RecordsReturned = data.Count; //request.PagingNumberOfRecords;
+        retVal.RecordsReturned = data.Count(); //request.PagingNumberOfRecords;
         retVal.SortDirection = "desc"; //request.SortDirection;
-        retVal.SortKey = "EMA20"; //request.SortColumnKey;
+        retVal.SortKey = "Volume"; //request.SortColumnKey;
         retVal.StartIndex = 0; //request.PagingStartIndex;
         retVal.TotalRecords = retVal.RecordsReturned; //request.PagingNumberOfRecords;
         retVal.Results = (ICollection)data;

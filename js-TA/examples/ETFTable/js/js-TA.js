@@ -62,7 +62,7 @@ var TA = {
                 for (var j = i, len2 = i + period; j < len2; j++) {
                     _iSum += parseFloat(_src[j]);
                 }
-                retVal.push(TA.Helpers.roundDecimal(_iSum));
+                retVal.push(_iSum);
                 _iSum = 0;
             } else {
                 retVal.push(null);
@@ -80,7 +80,7 @@ var TA = {
         var sums = TA.Sum(_src, period);
         for (var i = 0, len = _src.length; i < len; i++) {
             if ((i + period) <= len) {
-                retVal.push(TA.Helpers.roundDecimal(sums[i] / period));
+                retVal.push(sums[i] / period);
             } else {
                 retVal.push(null);
             }
@@ -105,7 +105,7 @@ var TA = {
                 retVal.push(startingSMA);
             } else {
                 currentEMA = ((parseFloat(_src[i]) - previousEMA) * smoothing) + previousEMA;
-                retVal.push(TA.Helpers.roundDecimal(currentEMA));
+                retVal.push(currentEMA);
                 previousEMA = currentEMA;
             }
         }
@@ -159,7 +159,7 @@ var TA = {
                 sum = TA.Sum(_src.slice(0, i + 1).reverse(), period)[0];
                 slope = (period * sumXY - sumX * sum) / divisor;
                 intercept = (sum - slope * sumX) / period;
-                retVal.push(TA.Helpers.roundDecimal(intercept + slope * (period - 1)));
+                retVal.push(intercept + slope * (period - 1));
             } else {
                 retVal.push(null);
             }
@@ -182,7 +182,7 @@ var TA = {
             else {
                 valueNBack = parseFloat(_src[i - (period - 1)]);
                 currentRoc = ((parseFloat(_src[i]) - valueNBack) / valueNBack) * 100;
-                retVal.push(TA.Helpers.roundDecimal(currentRoc));
+                retVal.push(currentRoc);
             }
         }
         retVal.reverse();
