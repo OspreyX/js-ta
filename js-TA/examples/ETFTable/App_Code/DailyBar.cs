@@ -125,6 +125,13 @@ public class DailyBar : Daily, IOhlcBar
    //   get { return base.Volume; }
    //   set { base.Volume = value; }
    //}
+
+   [DataMember]
+   public decimal? VolumeEMA10
+   {
+      get;
+      set;
+   }
    #endregion
 
    public DailyBar()
@@ -159,22 +166,32 @@ public class DailyBar : Daily, IOhlcBar
                 group daily by daily.Ticker;
 
       List<DailyBar> currentBars = new List<DailyBar>();
+      decimal? volumeEMA10;
       foreach (var ticker in all)
       {
-         List<Daily> listTicker = ticker.ToList();
-         currentBars.Add(
-             new DailyBar()
-             {
-                AdjustedClosePrice = listTicker[0].AdjustedClosePrice,
-                Closes = listTicker.Aggregate(String.Empty, (r, p) => r += "," + Decimal.Round(p.ClosePrice,2).ToString()).TrimStart(','),
-                Date = listTicker[0].Date,
-                HighPrice = listTicker[0].HighPrice,
-                LowPrice = listTicker[0].LowPrice,
-                OpenPrice = listTicker[0].OpenPrice,
-                Ticker = listTicker[0].Ticker,
-                Volume = listTicker[0].Volume,
-             });
+         if (ticker.Max(p => p.Date) >= DateTime.Today.AddDays(-3))
+         {
+            List<Daily> listTicker = ticker.ToList();
+            volumeEMA10 = listTicker.Take(30).ToTimeSeries(OhlcBarPart.Volume).EMAverage(10).Last().Value.Value;
+            volumeEMA10 = (volumeEMA10.HasValue) ? Decimal.Round((decimal)volumeEMA10, 0) : volumeEMA10;
+            if (volumeEMA10 > 0)
+            {
+               currentBars.Add(
+                   new DailyBar()
+                   {
+                      AdjustedClosePrice = listTicker[0].AdjustedClosePrice,
+                      Closes = listTicker.Aggregate(String.Empty, (r, p) => r += "," + Decimal.Round(p.ClosePrice, 2).ToString()).TrimStart(','),
+                      Date = listTicker[0].Date,
+                      HighPrice = listTicker[0].HighPrice,
+                      LowPrice = listTicker[0].LowPrice,
+                      OpenPrice = listTicker[0].OpenPrice,
+                      Ticker = listTicker[0].Ticker,
+                      Volume = listTicker[0].Volume,
+                      VolumeEMA10 = volumeEMA10
+                   });
+            }
+         }
       }
-      return currentBars.OrderByDescending(p => p.Volume);
+      return currentBars.OrderByDescending(p => p.VolumeEMA10);
    }
 }

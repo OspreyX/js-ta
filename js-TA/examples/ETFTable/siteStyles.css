@@ -18,12 +18,44 @@ body {
 }
 #waitDialog .bd
 {
-    height: 100px;
+    height: 130px;
     vertical-align: middle;
 }
 #waitDialog .bd span
 {
     text-align:left;
+}
+#progressbar
+{
+   position: relative;
+   width: 225px;
+   height: 18px;
+   border: 1px solid black;
+   overflow: hidden;
+   text-align: left;
+}
+#progressbar div
+{
+   float: left;
+   background: #316AC5;
+   width: 0;
+   height: 100%;
+}
+#percentComplete
+{
+   width: 225px;
+   text-align: center;
+   margin: 0px;
+   padding: 0px;
+}
+#statusMessage
+{
+   width: 225px;
+   text-align: left;
+}
+.complete
+{
+   color: Green;
 }
 
 #top1
@@ -45,6 +77,17 @@ body {
 {
     text-decoration: overline;
 }
+
+.largeSuper 
+{
+	margin-top: 20px;
+	margin-bottom: 15px;
+	font-family: 'Century Gothic';
+	font-size: 11pt;
+	font-weight: 900;
+	line-height: 3px;
+}
+
 #menu-list
 {
 	margin-left: 4px;
@@ -66,7 +109,12 @@ body {
 .yui-skin-sam .yui-layout-unit-left .yui-layout-hd 
 {
 	background:#C7C6E3 url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0 -1303px;
-	height:24px;
+	height:21px;
+}
+.yui-skin-sam .yui-layout-unit-right .yui-layout-hd 
+{
+	background:#C7C6E3 url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0 -1303px;
+	height:21px;
 }
 .yui-layout-unit-top div.yui-layout-hd 
 {

@@ -38,5 +38,6 @@ public enum OhlcBarPart
    Open,
    High,
    Low,
-   Close
+   Close,
+   Volume
 }

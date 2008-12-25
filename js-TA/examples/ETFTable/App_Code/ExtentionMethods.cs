@@ -47,6 +47,9 @@ public static partial class ExtensionMethods
             case OhlcBarPart.Close:
                pointValue = bar.ClosePrice;
                break;
+            case OhlcBarPart.Volume:
+               pointValue = Convert.ToDecimal(bar.Volume.HasValue ? (long)bar.Volume : 0);
+               break;
             default:
                throw new ArgumentException("Parameter barPart in not a valid value for OhlcBarPart enumeration.");
                break;

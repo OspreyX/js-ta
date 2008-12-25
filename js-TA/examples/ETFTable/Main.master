@@ -17,16 +17,26 @@
         <div id="top1">
             <h3>|&nbsp; ETF|Table &nbsp;| &nbsp;</h3>
             <span class="overlined">&nbsp; &nbsp; &nbsp;&nbsp; 
-            All Exchange Traded Funds with trend and performance, all on one page.</span>
+            All Exchange Traded Funds with trend and performance, all on one page.</span>&nbsp; 
+            <span><sup class="largeSuper">BETA</sup></span>
         </div>
         <asp:ContentPlaceHolder ID="cont1" runat="server">
         </asp:ContentPlaceHolder>
-        <div id="footer">
+        <%--<div id="footer">
             <span>The footer.</span>
-        </div>
+        </div>--%>
     </div>
     <asp:ContentPlaceHolder ID="scripts" runat="server">
     </asp:ContentPlaceHolder>
     </form>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-6292758-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
 </body>
 </html>
