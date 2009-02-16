@@ -1,33 +1,5 @@
-﻿// <reference name="MicrosoftAjax.js"/>
-/// <reference path="yui/yahoo/yahoo.js"/>
-// <reference path="sugar-arrays.js"/>
-//Type.registerNamespace('TA');
-//Array.registerClass('Array');
-
-//TA.TimeSeries = function() {
-//   this._innerList = [];
-//}
-//TA.TimeSeries.registerClass('TA.TimeSeries', Array);
-
-//TA.PointInTime = function() {
-//   this.value = new Object();
-//   this.dateTime = new Date();
-//}
-//TA.PointInTime.registerClass('TA.PointInTime');
 
 var TA = {
-
-    //    PointInTime: function(dt, val) {
-    //        this.date = dt;
-    //        this.value = val;
-    //    },
-
-    //    TimeSeries: function(sourceArray) {
-
-    //        var _src = [];
-    //        _src.concat(sourceArray);
-
-    //    },
 
     Cfg: {
         ReturnType: "Array",
@@ -112,7 +84,7 @@ var TA = {
         retVal.reverse();
         return retVal;
     },
-
+//    TODO: This version creates the sums variable only once, which would be far more efficient, but it is not working as expected yet.
 //    LinearReg: function(series, period) {
 //        var retVal = [];
 //        var _src = ([]).concat(series);
@@ -190,7 +162,3 @@ var TA = {
     }
 };
 
-//TA.TimeSeries = function (sourceArray) {
-//   
-//};
-//TA.TimeSeries.prototype = Array;
